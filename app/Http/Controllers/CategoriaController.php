@@ -9,25 +9,23 @@ class CategoriaController extends Controller
 {
     //crud
     //listar
-    public function listarCategoria(){
+    public function listarCategoria()
+    {
         //$categorias = Categoria::all();
-        //$categorias = Categoria::orderBy('created_at','asc')->get();
-        $categorias = categoria::first();
+        $categorias = Categoria::orderBy('created_at','asc')->get();
+        // $categorias = categoria::first();
         return response()->json(
             [
-                'success'=> true,
-                'nombre' => 'Wiliam Dida',
-                'data' => $categorias,
+                'success' => true,
+                'nombre' => 'Wiliam Dida 😎',
+                'data' => $categorias
             ]
-            );
+        );
     }
-    public function agregarCategoria(){
+    public function agregarCategoria()
+    {
         $categorias = Categoria::orderBy();
     }
-    public function editarCategoria(){
-        
-    }
-    public function eliminarCategoria(){
-        
-    }
+    public function editarCategoria() {}
+    public function eliminarCategoria() {}
 }

@@ -23,6 +23,11 @@ Route::get('contador', function () {
     return Inertia::render('Contador');
 })->middleware(['auth', 'verified'])->name('contador');
 
+//Inertia.js
+Route::get('categoria', function(){
+    return Inertia::render('Categoria');
+})->middleware(['auth', 'verified'])->name('categoria');
+
 Route::get('categorias-data',[CategoriaController::class, 'listarCategoria']);
 
 require __DIR__.'/settings.php';
