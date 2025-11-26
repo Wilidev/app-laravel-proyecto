@@ -24,10 +24,10 @@ Route::get('contador', function () {
 })->middleware(['auth', 'verified'])->name('contador');
 
 //Inertia.js
-Route::get('categoria', function(){
+Route::get('categoria', function () {
     return Inertia::render('Categoria');
 })->middleware(['auth', 'verified'])->name('categoria');
 
-Route::get('categorias-data',[CategoriaController::class, 'listarCategoria']);
+Route::get('categorias-data', [CategoriaController::class, 'listarCategoria']);
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
