@@ -30,7 +30,7 @@ const mainNavItems: NavItem[] = [
         icon: Calculator,
     },
     {
-        title: 'Contador',
+        title: 'Categoria',
         href: categoria(),
         icon: ChartColumnStacked,
     },
