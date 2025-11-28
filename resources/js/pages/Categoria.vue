@@ -7,6 +7,7 @@ import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { Pencil, Plus, SaveAll, SquareX, Trash2 } from 'lucide-vue-next';
+import Swal from 'sweetalert2';
 
 const categorias = ref([]);
 const miNombre = ref("");
@@ -14,8 +15,8 @@ const mostrarModal = ref(false);
 // Formulario
 const formulario = ref(
     {
-        nombre_categoria :'',
-        descripcion :'',
+        nombre_categoria: '',
+        descripcion: '',
     }
 );
 
@@ -46,10 +47,56 @@ const cerrarModal = () => {
     mostrarModal.value = false;
 };
 
-const enviarFormulario = () =>{
+const enviarFormulario = async () => {
     console.log('Wiliam Dida');
     console.log(formulario.value);
+
+    const respuesta = await axios.post('/categorias-data', formulario.value);
+    if (respuesta.data.success) {
+        Swal.fire({
+            title: "Recurso creado",
+            text: "Categoria creada",
+            icon: "success"
+        });
+        mostrarModal.value = false;
+        listarCategoria();
+    } else {
+        Swal.fire({
+            title: "Recurso no creado",
+            text: "Categoria no creada",
+            icon: "success"
+        });
+    }
+    console.log(respuesta);
 };
+
+const eliminarCategoria = async (id: number) => {
+    const respuesta = await axios.delete(`/categorias-data/${id}`);
+    console.log(respuesta);
+    if (respuesta.data.success) {
+        Swal.fire({
+            title: "Recurso eliminado",
+            text: "Categoria eliminada",
+            icon: "success"
+        });
+    }
+    listarCategoria();
+}
+const confirmacion = (id: number) => {
+    Swal.fire({
+        title: "Estas seguro?",
+        text: "El recurso se eliminara de forma permanente",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Eliminar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            eliminarCategoria(id);
+        }
+    });
+}
 onMounted(listarCategoria);
 </script>
 
@@ -100,7 +147,7 @@ onMounted(listarCategoria);
                                     <Pencil />
                                 </a>
                                 <a class="inline-block rounded-sm border border-red-600 bg-red-600 px-5 py-3 text-sm font-medium text-black hover:bg-transparent hover:text-red-600"
-                                    href="#">
+                                    href="#" @click=confirmacion(item.id)>
                                     <Trash2 />
                                 </a>
                             </div>
@@ -121,16 +168,14 @@ onMounted(listarCategoria);
                     <div class="mb-3">
                         <label for="nombre_categoria">
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-200"> Nombre </span>
-                            <input type="text" id="nombre_categoria"
-                            v-model="formulario.nombre_categoria"
+                            <input type="text" id="nombre_categoria" v-model="formulario.nombre_categoria"
                                 class=" p-0.5 mt-0.5 w-full rounded border-gray-600 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-blue-950 dark:text-blue">
                         </label>
                     </div>
                     <div class="mb-3">
                         <label for="descripcion">
                             <span class="text-sm font-medium text-gray-700 dark:text-gray-200"> Descripcion </span>
-                            <input type="text" id="descripcion"
-                            v-model="formulario.descripcion"
+                            <input type="text" id="descripcion" v-model="formulario.descripcion"
                                 class=" p-0.5 mt-0.5 w-full rounded border-gray-600 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-blue-950 dark:text-blue">
                         </label>
                     </div>

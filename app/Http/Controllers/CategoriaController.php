@@ -11,8 +11,8 @@ class CategoriaController extends Controller
     //listar
     public function listarCategoria()
     {
-        $categorias = Categoria::all();
-        //$categorias = Categoria::orderBy('created_at','asc')->get();
+        //$categorias = Categoria::all();
+        $categorias = Categoria::orderBy('created_at', 'asc')->get();
         // $categorias = categoria::first();
         return response()->json(
             [
@@ -22,10 +22,34 @@ class CategoriaController extends Controller
             ]
         );
     }
-    public function agregarCategoria()
+    public function guardarCategoria(Request $request)
     {
-        $categorias = Categoria::orderBy();
+        $validate = $request->validate([
+            'descripcion' => 'required|string',
+            'nombre_categoria' => 'required'
+        ]);
+        $categoria = categoria::create($request->all());
+
+        return response()->json(
+            [
+                'success' => true,
+                'nombre' => 'Wiliam Dida 😎',
+                'data' => $categoria
+            ]
+        );
     }
     public function editarCategoria() {}
-    public function eliminarCategoria() {}
+    public function eliminarCategoria($id_categoria)
+    {
+        $categoria = Categoria::findOrfail($id_categoria);
+        $categoria->delete();
+
+        return response()->json(
+            [
+                'success' => true,
+                'nombre' => 'Wiliam Dida 😎',
+                'data' => null
+            ]
+        );
+    }
 }

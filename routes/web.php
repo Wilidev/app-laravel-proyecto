@@ -29,5 +29,8 @@ Route::get('categoria', function () {
 })->middleware(['auth', 'verified'])->name('categoria');
 
 Route::get('categorias-data', [CategoriaController::class, 'listarCategoria']);
+Route::post('categorias-data', [CategoriaController::class, 'guardarCategoria']);
+Route::put('categorias-data/{id_categoria}', [CategoriaController::class, 'editarCategoria']);
+Route::delete('categorias-data/{id_categoria}', [CategoriaController::class, 'eliminarCategoria']);
 
 require __DIR__ . '/settings.php';
