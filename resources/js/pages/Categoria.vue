@@ -85,7 +85,7 @@ const eliminarCategoria = async (id: number) => {
 const confirmacion = (id: number) => {
     Swal.fire({
         title: "Estas seguro?",
-        text: "El recurso se eliminara de forma permanente",
+        text: `El recurso se eliminara de forma permanente: ID: ${id}`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
