@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { categoria, dashboard } from '@/routes';
+import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
 const categorias = ref([]);
 const miNombre = ref("");
 const mostrarModal = ref(false);
+const mostrarModalEditar = ref(false);
+const idCategoria = ref();
 // Formulario
 const formulario = ref(
     {
@@ -47,6 +49,29 @@ const cerrarModal = () => {
     mostrarModal.value = false;
 };
 
+//funciones para manipular el modal editar
+const abrirModalEditar = (dataCategoria: any) => {
+    mostrarModalEditar.value = true;
+    idCategoria.value = dataCategoria.id;
+
+    console.log(dataCategoria.nombre_categoria);
+    console.log(dataCategoria.descripcion);
+
+    formulario.value.nombre_categoria = dataCategoria.nombre_categoria;
+    formulario.value.descripcion = dataCategoria.descripcion;
+
+};
+
+const cerrarModalEditar = () => {
+    mostrarModalEditar.value = false;
+    formulario.value = {
+        nombre_categoria: '',
+        descripcion: '',
+    };
+    idCategoria.value = null;
+
+};
+
 const enviarFormulario = async () => {
     console.log('Wiliam Dida');
     console.log(formulario.value);
@@ -58,18 +83,45 @@ const enviarFormulario = async () => {
             text: "Categoria creada",
             icon: "success"
         });
-        mostrarModal.value = false;
+        mostrarModalEditar.value = false;
         listarCategoria();
     } else {
         Swal.fire({
             title: "Recurso no creado",
             text: "Categoria no creada",
-            icon: "success"
+            icon: "error"
         });
     }
     console.log(respuesta);
 };
 
+const actualizarFormulario = async () => {
+    console.log('Wiliam Dida');
+    console.log(formulario.value);
+
+    const respuesta = await axios.put(`/categorias-data/${idCategoria.value}`, formulario.value);
+    if (respuesta.data.success) {
+        Swal.fire({
+            title: 'Categoria editada con exito',
+            text: 'Categoria editada',
+            icon: 'success',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                mostrarModalEditar.value = false;
+                listarCategoria();
+            }
+        });
+    } else {
+        Swal.fire({
+            title: 'Error al editar',
+            text: 'Categoria no editada',
+            icon: 'error',
+        });
+    }
+};
+// const exportarPdf = () => {
+// const
+// }
 const eliminarCategoria = async (id: number) => {
     const respuesta = await axios.delete(`/categorias-data/${id}`);
     console.log(respuesta);
@@ -138,12 +190,12 @@ onMounted(listarCategoria);
                         class="*:text-gray-900 *:first:font-medium dark:*:text-white">
                         <td class="px-3 py-2 whitespace-nowrap">{{ item.nombre_categoria }}</td>
                         <td class="px-3 py-2 whitespace-nowrap">{{ item.descripcion }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap">{{ item.estado }}</td>
+                        <td class="px-3 py-2 whitespace-nowrap">{{ item.estado == 1 ? 'Activo' : 'Inactivo' }}</td>
                         <td class="px-3 py-2 whitespace-nowrap">
 
                             <div class="flex gap-x-4">
                                 <a class="inline-block rounded-sm border border-blue-600 bg-blue-600 px-5 py-3 text-sm font-medium text-black hover:bg-transparent hover:text-blue-600"
-                                    href="#">
+                                    href="#" @click="abrirModalEditar(item)">
                                     <Pencil />
                                 </a>
                                 <a class="inline-block rounded-sm border border-red-600 bg-red-600 px-5 py-3 text-sm font-medium text-black hover:bg-transparent hover:text-red-600"
@@ -189,6 +241,47 @@ onMounted(listarCategoria);
                         <button type="submit"
                             class="flex justify-center items-center gap-2 rounded bg-blue-600 px-4 py-3 text-sm font-medium text-black transition-colors hover:bg-blue-700">
                             <SaveAll /> Guardar
+                        </button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+        <div class="fixed inset-0 z-50 grid place-content-center bg-black/50 p-4" role="dialog" aria-modal="true"
+            aria-labelledby="modalTitle" v-if="mostrarModalEditar">
+            <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
+                <h2 id="modalTitle" class="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+                    Editar Categoria
+                </h2>
+
+                <form class="mt-4" @submit.prevent="actualizarFormulario">
+                    <div class="mb-3">
+                        <label for="nombre_categoria">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Nombre
+                            </span>
+                            <input type="text" id="nombre_categoria" v-model="formulario.nombre_categoria"
+                                class="mt-0.5 w-full rounded border-gray-300 p-2 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white" />
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                Descripcion
+                            </span>
+                            <input type="text" id="descripcion" v-model="formulario.descripcion"
+                                class="mt-0.5 w-full rounded border-gray-300 p-2 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white" />
+                        </label>
+                    </div>
+                    <footer class="mt-6 flex justify-end gap-2">
+                        <button type="button"
+                            class="flex items-center justify-center gap-2 rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                            @click="cerrarModalEditar">
+                            <SquareX /> Cancelar
+                        </button>
+
+                        <button type="submit"
+                            class="flex items-center justify-center gap-2 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700">
+                            <Save /> Guardar
                         </button>
                     </footer>
                 </form>
