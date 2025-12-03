@@ -15,14 +15,6 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('hola-mundo', function () {
-    return Inertia::render('HolaMundo');
-})->middleware(['auth', 'verified'])->name('hola-mundo');
-
-Route::get('contador', function () {
-    return Inertia::render('Contador');
-})->middleware(['auth', 'verified'])->name('contador');
-
 //Inertia.js
 Route::get('categoria', function () {
     return Inertia::render('Categoria');
